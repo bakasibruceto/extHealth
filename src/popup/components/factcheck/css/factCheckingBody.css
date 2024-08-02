@@ -1,58 +1,17 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto+Slab');
+@import url('accordion.css');
+@import url('evidence.css');
+
 
 #factChecking{
     --hypothesis-color: #1E1919;
     --accordion-title-color: #7E939A;
-    --entailment-border: 1px solid #3BA0FDC7;
-    --contradiction-border: 1px solid #A86CD0;
-    --neutral-border: 1px solid #F8686A;
+    --entailment-border: 2px solid #3BA0FD;
+    --contradiction-border: 2px solid #F8686A;
+    --neutral-border: 2px solid #A86CD0;
     --claim-color: var(--hypothesis-color);
     --url-color: #524A3E;
     --snippets-color: #5F6368;
     --date-color: #524A3E;
     --show-more-color: #66B5FD;
-}
-
-
-#factChecking{
-    font-family: Roboto Slab;
-    .hypothesis{
-       font-size: 2rem;
-    }
-    .accordion{
-        .title{
-            color: var(--accordion-title-color);
-        }
-        .imageIcons{
-            width: 1.5rem;
-            height: 1.5rem;
-            border-radius: 5px;
-        }
-        .entailmentBorder{
-            border-left: var(--entailment-border);
-        }
-        .contradictionBorder{
-            border-left: var(--contradiction-border);
-        }
-        .neutralBorder{
-            border-left: var(--neutral-border);
-        }
-        .url{
-            color: var(--url-color);
-            text-decoration: none;
-        }
-        .claim {
-            font-size: 1.5rem;
-            color: var(--claim-color);
-        }
-        .snippets{
-            color: var(--snippets-color);
-        }
-        .date{
-            color: var(--date-color);
-        }
-        .showMore{
-            color: var(--show-more-color);
-        }
-    }
 }

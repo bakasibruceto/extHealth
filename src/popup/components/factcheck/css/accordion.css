@@ -1,0 +1,114 @@
+#factChecking{
+    hr{
+        display: none;
+    }
+    form{
+        input{
+            font-family: Roboto Slab;
+            font-weight: 500;
+            font-size: 1.5rem;
+            background-color: transparent;
+            border: none;
+            height: 100%;
+            width: 100%;
+            padding: 5px 0;
+            margin-bottom: 10px;
+            display: inline-block;
+            box-sizing: border-box;
+        }
+    }
+    *::before{
+        display: none !important;
+    }
+    .accordion{
+        position: relative;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        margin-bottom: 1.5rem;
+        /* margin-left: 24px; */
+        .MuiAccordionSummary-root{
+            align-items: start;
+            min-height: 0;
+        }
+        .MuiAccordionSummary-content{
+            margin: 0;
+            display: block;
+        }
+        .title{
+            color: var(--accordion-title-color);
+            span{
+                color: white;
+                border-radius: 8px;
+                position: absolute;
+                padding: 2px 5px;
+                left: -10px;
+                top: 0;
+                z-index: 50;
+            }
+        }
+        .imageIcons{
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 5px;
+        }
+        .entailmentBorder{
+            border-left: var(--entailment-border);
+        }
+        .contradictionBorder{
+            border-left: var(--contradiction-border);
+        }
+        .neutralBorder{
+            border-left: var(--neutral-border);
+        }
+        .url{
+            color: var(--url-color);
+            text-decoration: none;
+        }
+        .claim {
+            font-size: 1.5rem;
+            color: var(--claim-color);
+        }
+        .snippets{
+            color: var(--snippets-color);
+        }
+        .date{
+            color: var(--date-color);
+        }
+        .showMore{
+            color: var(--show-more-color);
+        }
+    }
+
+    .Supported-accordion:has(.Mui-expanded){
+        border-left: var(--entailment-border);
+    }
+    .Supported-accordion{
+        .title{
+            span{
+                background-color: #3BA0FD;
+            }
+        }
+    }
+    .Disputed-accordion:has(.Mui-expanded){
+        border-left: var(--contradiction-border);
+    }
+    .Disputed-accordion{
+
+        .title{
+            span{
+                background-color: #F8686A;
+            }
+        }
+    }
+    .Neutral-accordion:has(.Mui-expanded){
+        border-left: var(--neutral-border);
+    }
+    .Neutral-accordion{
+        .title{
+            span{
+                background-color: #A86CD0;
+            }
+        }
+    }
+}

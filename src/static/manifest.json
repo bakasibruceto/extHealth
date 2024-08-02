@@ -6,9 +6,10 @@
   "action": {
     "default_popup": "popup.html"
   },
-  "permissions": ["activeTab", "scripting", "storage", "notifications", "contextMenus"],
+  "permissions": ["activeTab", "scripting", "storage", "notifications", "contextMenus", "alarms"],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "persistent": true
   },
   "icons": {
     "16": "icon.png",
@@ -18,11 +19,14 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.twitter.com/*", "*://*.x.com/*", "*://*.example.com/*"],
+      "matches": ["https://*.twitter.com/*", "https://*.x.com/*"],
       "js": ["content.js"]
     }
   ],
-  "host_permissions": ["https://*/*", "http://*/*"],
+  "host_permissions": [
+    "https://*.twitter.com/*",
+    "https://*.x.com/*"
+  ],
   "content_security_policy": {
     "extension_pages": 
       "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"

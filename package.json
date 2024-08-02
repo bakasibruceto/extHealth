@@ -31,7 +31,8 @@
     "@mui/icons-material": "^5.16.1",
     "@mui/material": "^5.16.1",
     "nanoid": "^5.0.7",
-    "react-frame-component": "^5.2.7"
+    "react-frame-component": "^5.2.7",
+    "react-loader-spinner": "^6.1.6"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

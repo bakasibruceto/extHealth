@@ -2,6 +2,8 @@ import React, { useState,  useEffect, useRef  } from 'react';
 import './css/default.css'; // Assuming styles are defined here
 
 import FactCheckingSection from "../components/factcheck/FactCheckingSection"
+import Settings from "../components/settings/section"
+
 
 const Layout = () => {
     const [activeOption, setActiveOption] = useState('factChecking');
@@ -64,11 +66,11 @@ const Layout = () => {
           <div id="factChecking" className={`${activeOption === 'factChecking' ? 'selectedOption' : ''} appearLeft`}>
             <FactCheckingSection/>
           </div>
-          <div id="healthReminders" className={activeOption === 'healthReminders' ? 'selectedOption' : ''}>
+          <div id="healthReminders" className={`${activeOption === 'healthReminders' ? 'selectedOption' : ''} ${activeOption !== 'healthReminders' ? 'disappearLeft' : ''}`}>
             <div>sample reminder</div>
           </div>
-          <div id="settings" className={activeOption === 'settings' ? 'selectedOption' : ''}>
-            <div>sample settings</div>
+          <div id="settings" className={`${activeOption === 'settings' ? 'selectedOption' : ''} ${activeOption !== 'settings' ? 'disappearLeft' : ''}`}>
+            <Settings/>
           </div>
         </section>
       </div>

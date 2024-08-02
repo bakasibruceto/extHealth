@@ -26,36 +26,77 @@ const FactCheckingSection: React.FC = () => {
     setExpanded(isExpanded ? panel : false);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const newFacts = [...facts];
+    newFacts[index].hypothesis = e.target.value;
+    setFacts(newFacts);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>, index: number) => {
+    e.preventDefault();
+    const hypothesis = facts[index].hypothesis;
+    // Send the updated fact to the background script
+    chrome.runtime.sendMessage({ type: 'UPDATE_FACT', hypothesis }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error('Error:', chrome.runtime.lastError.message);
+      } else {
+        const updatedFacts = [...facts];
+        updatedFacts[index].premises = response;
+        chrome.storage.local.set({ extHealthFacts: { result: updatedFacts } }, () => {
+          if (chrome.runtime.lastError) {
+            console.error('Error updating local storage:', chrome.runtime.lastError.message);
+          } else {
+            console.log('Local storage updated successfully', updatedFacts);
+            setFacts(updatedFacts); // Update the state with the new facts
+          }
+        });
+      }
+    });
+    
+  };
+
+
+  
   const accordionStates = ['entailment', 'contradiction', 'neutral'];
 
   const stateMappings = {
     entailment: "Supported",
     contradiction: "Disputed",
-    neutral: "Unsure but related"
+    neutral: "Neutral"
   };
 
   return (
     <div>
-      {facts.map((fact, index) => (
-        <div key={index}>
-          <h2>{fact.hypothesis}</h2>
-          {accordionStates.map((state) => {
-            const relatedPremises = fact.premises.filter(premise => premise.relationship.toLowerCase() === state.toLowerCase());
-            return relatedPremises.length > 0 && (
-              <CustomAccordion
-                key={state}
-                title={`${stateMappings[state]}`} // Capitalize the state
-                expanded={expanded === `${index}-${state}`}
-                onChange={handleChange(`${index}-${state}`)}
-              >
-                {relatedPremises.map((premise, idx) => (
-                  <Evidence idx={idx} premise={premise} />
-                ))}
-              </CustomAccordion>
-            );
-          })}
-        </div>
-      ))}
+      {Array.isArray(facts) && facts.length > 0 ? (
+        facts.map((fact, index) => (
+          <div key={index}>
+            <form action="" id={`form-${index}`} onSubmit={(e) => handleSubmit(e, index)}>
+              <input type="text" value={fact.hypothesis} 
+              onChange={(e) => handleInputChange(e, index)}/>
+            </form>
+            {accordionStates.map((state) => {
+              const relatedPremises = fact.premises.filter(premise => premise.relationship.toLowerCase() === state.toLowerCase());
+              const count = relatedPremises.length;
+            
+              return count > 0 && (
+                <CustomAccordion
+                  key={`${index}-${state}`}
+                  title={`${stateMappings[state]}`} 
+                  count={`${count}`}
+                  expanded={expanded === `${index}-${state}`}
+                  onChange={handleChange(`${index}-${state}`)}
+                >
+                  {relatedPremises.map((premise, idx) => (
+                    <Evidence key={`${index}-${state}-${idx}`} idx={idx} premise={premise} />
+                  ))}
+                </CustomAccordion>
+              );
+            })}
+          </div>
+        ))
+      ) : (
+        <div>whoa look at the emptiness</div>
+      )}
     </div>
   );
 };

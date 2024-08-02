@@ -3,6 +3,8 @@ export interface Premise {
     premise: string; // The actual premise text
     relationship: 'contradiction' | 'entailment' | 'neutral'; // The relationship type
     url: string; // URL related to the premise
+    title: string; // Title of the premise
+    date:string;
   }
   
   // Define the structure of a fact, which contains a hypothesis and an array of premises

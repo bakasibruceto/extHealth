@@ -7,6 +7,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface CustomAccordionProps {
   title: string;
+  count: string;
   children: React.ReactNode;
   expanded: boolean;
   onChange: (event: React.SyntheticEvent, isExpanded: boolean) => void;
@@ -14,18 +15,24 @@ interface CustomAccordionProps {
 
 const CustomAccordion: React.FC<CustomAccordionProps> = ({
   title,
+  count,
   children,
   expanded,
   onChange,
 }) => {
   return (
-    <Accordion expanded={expanded} onChange={onChange}>
+    <Accordion expanded={expanded} onChange={onChange} className={`accordion ${title}-accordion`}>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="panel-content"
         id="panel-header"
       >
-        <Typography>{title}</Typography>
+        <Typography className="title">
+          <span>
+            {count}
+          </span>
+          {title}
+        </Typography>
       </AccordionSummary>
       <AccordionDetails>{children}</AccordionDetails>
     </Accordion>
