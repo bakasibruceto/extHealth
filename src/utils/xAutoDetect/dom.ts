@@ -9,11 +9,11 @@ import { TweetBodyWrapper, TwitterTheme } from "./types";
 const getXTheme = (): TwitterTheme => {
     const bodyBackgroundColor = getComputedStyle(document.body).backgroundColor;
     if (bodyBackgroundColor === "rgb(21, 32, 43)") {
-        return TwitterTheme.Dim;
+        return TwitterTheme.Dim, TwitterTheme.Dim_2;
     } else if (bodyBackgroundColor === "rgb(255, 255, 255)") {
-        return TwitterTheme.White;
+        return TwitterTheme.White , TwitterTheme.White_2;
     } else {
-        return TwitterTheme.Dark;
+        return TwitterTheme.Dark, TwitterTheme.Dark2;
     }
 
 };
