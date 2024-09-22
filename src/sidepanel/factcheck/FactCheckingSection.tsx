@@ -46,23 +46,24 @@ const FactCheckingSection: React.FC = () => {
     };
   }, []);
 
-  const handleDivClick = (index: number, accordionState: string) => {
-    setFocusedIndex(prevIndex => {
-      setFocusedState(prevState => {
-        if (prevIndex === index && prevState === accordionState) {
-          return null;
-        } else {
-          return accordionState;
-        }
-      });
-      return prevIndex === index && focusedState === accordionState ? null : index;
-    });
-  };
-
-
-  const handleChange =
-  (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+  const handleAccordionChange =
+  (panel: string, index: number, accordionState: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : false);
+    if(isExpanded){
+      setFocusedIndex(prevIndex => {
+        setFocusedState(prevState => {
+          if (prevIndex === index && prevState === accordionState) {
+            return null;
+          } else {
+            return accordionState;
+          }
+        });
+        return prevIndex === index && focusedState === accordionState ? null : index;
+      });
+    } else {
+      setFocusedIndex(null);
+      setFocusedState(null);
+    }
   };
 
 
@@ -317,8 +318,7 @@ const FactCheckingSection: React.FC = () => {
                     title={`${stateMappings[state]}`} 
                     count={`${count}`}
                     expanded={expanded === `${index}-${state}`}
-                    onChange={handleChange(`${index}-${state}`)}
-                    onClick={() => handleDivClick(index, state)}
+                    onChange={handleAccordionChange(`${index}-${state}`, index, state)}
                   >
                     {relatedPremises.map((premise, idx) => (
                       <Evidence key={`${index}-${state}-${idx}`} idx={idx} premise={premise} />
