@@ -16,7 +16,7 @@ const FactCheckingSection: React.FC = () => {
   const [expanded, setExpanded] = useState<string | false>(false);
   const [newFact, setNewFact] = useState('');
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
-
+  const [focusedState, setFocusedState] = useState<string | null>(null);
   const [facts, setFacts] = useState([]);
 
   const scrollableDivRef = useRef<HTMLDivElement>(null);
