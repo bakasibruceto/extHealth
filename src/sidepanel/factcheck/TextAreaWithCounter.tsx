@@ -1,7 +1,7 @@
 import './css/TextAreaWithCounter.css'; // Import CSS file
 
 import React, { useEffect, useState, ChangeEvent, FocusEvent, KeyboardEvent, useRef } from 'react';
-
+import TextareaAutosize from 'react-textarea-autosize';
 interface TextAreaWithCounterProps {
   value: string;
   onChange?: (event: ChangeEvent<HTMLTextAreaElement>) => void;
@@ -10,7 +10,7 @@ interface TextAreaWithCounterProps {
   onKeyDown?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
   onKeyUp?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
   onInput?: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
-  style?: React.CSSProperties; 
+  className?: string;
 }
 
 const TextAreaWithCounter: React.FC<TextAreaWithCounterProps> = ({
@@ -21,7 +21,7 @@ const TextAreaWithCounter: React.FC<TextAreaWithCounterProps> = ({
   onKeyDown,
   onKeyUp,
   onInput,
-  style,
+  className,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const maxLength = 80;
@@ -39,31 +39,25 @@ const TextAreaWithCounter: React.FC<TextAreaWithCounterProps> = ({
     if (onBlur) onBlur(event);
   };
 
-  const autoResizeTextarea = (textarea: HTMLTextAreaElement) => {
-    textarea.style.height = 'auto'; // Reset the height
-    textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scroll height
-  };
-
-  const textColor = value.length > maxLength ? 'red' : '';
+  const textareaClassName = `textarea ${className || ''} ${value.length > maxLength ? 'textarea-exceed' : ''}`.trim();
   return (
     <div className="textarea-container">
-      <textarea
+      <TextareaAutosize 
+        maxRows={3}
+        minRows={1}
         ref={textareaRef}
-        rows={1}
         value={value}
         onChange={onChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onKeyDown={onKeyDown}
         onKeyUp={onKeyUp}
-        onInput={(e) => autoResizeTextarea(e.target as HTMLTextAreaElement)}
-        style={{ ...style, borderColor: textColor}}
-        className="textarea"
+        className={textareaClassName}
         placeholder='Enter a health claim here...'
       />
       {isFocused && (
         <div 
-        style={{ color: textColor}}
+        style={{ color: value.length > maxLength ? 'red' : '' }}
         className="counter">
           {value.length} / {maxLength}
         </div>

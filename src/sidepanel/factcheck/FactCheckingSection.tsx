@@ -46,9 +46,19 @@ const FactCheckingSection: React.FC = () => {
     };
   }, []);
 
-  const handleDivClick = (index: number) => {
-    setFocusedIndex(index);
-  }
+  const handleDivClick = (index: number, accordionState: string) => {
+    setFocusedIndex(prevIndex => {
+      setFocusedState(prevState => {
+        if (prevIndex === index && prevState === accordionState) {
+          return null;
+        } else {
+          return accordionState;
+        }
+      });
+      return prevIndex === index && focusedState === accordionState ? null : index;
+    });
+  };
+
 
   const handleChange =
   (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -271,10 +281,7 @@ const FactCheckingSection: React.FC = () => {
             <TextAreaWithCounter 
               value={fact.hypothesis} 
               onChange={(e) => handleInputChange(e, index)}
-              style={{
-                backgroundColor: focusedIndex === index ? '#D7ECFF' : 'white',
-                borderColor: focusedIndex === index ? '#66B5FD' : '#CECECE'
-              }}
+              className={focusedIndex === index ? 'textarea-focused' : 'textarea-unfocused'}
               onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
@@ -311,7 +318,7 @@ const FactCheckingSection: React.FC = () => {
                     count={`${count}`}
                     expanded={expanded === `${index}-${state}`}
                     onChange={handleChange(`${index}-${state}`)}
-                    onClick={() => handleDivClick(index)}
+                    onClick={() => handleDivClick(index, state)}
                   >
                     {relatedPremises.map((premise, idx) => (
                       <Evidence key={`${index}-${state}-${idx}`} idx={idx} premise={premise} />

@@ -16,6 +16,22 @@ textarea:focus {
     border: 1px solid #5F6368;
 }
 
+
+.textarea-focused {
+    background-color: #D7ECFF !important;
+    border-color: #66B5FD !important;
+}
+
+.textarea-unfocused {
+    background-color: white !important;
+    border-color: #CECECE !important;
+}
+
+.textarea-exceed {
+    border-color: red !important;
+}
+
+
 .counter {
 position: absolute;
 bottom: 7px; /* Adjust as needed */
