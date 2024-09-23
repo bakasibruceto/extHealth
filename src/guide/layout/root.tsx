@@ -19,7 +19,7 @@ export default function Root() {
           <CSSTransition
             key={location.pathname} // Ensure the transition occurs when the route changes
             nodeRef={nodeRef} 
-            timeout={300} // Duration of the animation
+            timeout={500} // Duration of the animation
             classNames="fade" // CSS class for animations
             unmountOnExit
           >
