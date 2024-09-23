@@ -259,66 +259,84 @@ async function factCheck(text) {
 
 }
 
+
 let popupWindowId: number | null = null;
 let isResizing = false;
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.action === "openPopup") {
+    console.log("Received openPopup request");
     // Check if the popup window is already opened
     if (popupWindowId !== null) {
+      console.log("Popup window ID exists:", popupWindowId);
       chrome.windows.get(popupWindowId, (window) => {
         if (window) {
-          // Bring the existing popup window to the front
-          chrome.windows.update(popupWindowId!, { focused: true });
-          sendResponse({ status: "already_opened" });
+          console.log("Popup window found, closing it");
+          // Close the existing popup window
+          chrome.windows.remove(popupWindowId!, () => {
+            console.log("Existing popup window closed.");
+            // Reset popupWindowId after closing
+            popupWindowId = null;
+            // Create a new popup window after closing the existing one
+            createPopupWindow(sendResponse);
+          });
         } else {
-          // Create a new popup window
+          console.log("Popup window not found, resetting ID and creating new window");
+          // Reset popupWindowId if the window is not found
+          popupWindowId = null;
+          // Create a new popup window if the existing one is not found
           createPopupWindow(sendResponse);
         }
       });
     } else {
+      console.log("No existing popup window, creating a new one");
       // Create a new popup window
       createPopupWindow(sendResponse);
     }
 
-    // Handle healthCardHeight message
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.action === "healthCardHeight") {
-        const height = request.height;
-        // console.log("Health card height:", height);
-        // Resize the popup window to match the height of the health card
-        if (popupWindowId !== null ) {
-          // If the popup window is already open, resize it
-          if (!isResizing ) {
-            isResizing = true;
-            chrome.windows.update(
-              popupWindowId,
-              { height: height + 50 },
-              () => {
-                sendResponse({ status: "height_updated", height });
-                isResizing = false;
-              }
-            );
+    return true; // Keep the message channel open for sendResponse
+  }
+
+  // Handle healthCardHeight message
+  if (request.action === "healthCardHeight") {
+    const height = request.height;
+    console.log("Received healthCardHeight request with height:", height);
+    // Resize the popup window to match the height of the health card
+    if (popupWindowId !== null) {
+      console.log("Popup window ID exists for resizing:", popupWindowId);
+      // If the popup window is already open, resize it
+      if (!isResizing) {
+        isResizing = true;
+        chrome.windows.update(
+          popupWindowId,
+          { height: height + 50 },
+          () => {
+            console.log("Popup window height updated to:", height + 50);
+            sendResponse({ status: "height_updated", height });
+            isResizing = false;
           }
-        } else {
-          // If no popup window is open, create a new one with the new height
-          createPopupWindow(height + 50); // Add some padding
-          sendResponse({ status: "window_created", height });
-        }
+        );
       }
-    });
+    } else {
+      console.log("No existing popup window, creating a new one with height:", height + 50);
+      // If no popup window is open, create a new one with the new height
+      createPopupWindow(sendResponse, height + 50); // Add some padding
+      sendResponse({ status: "window_created", height });
+    }
 
     return true; // Keep the message channel open for sendResponse
   }
 });
 
-function createPopupWindow(sendResponse: (response: any) => void) {
+function createPopupWindow(sendResponse: (response: any) => void, height: number = 400) {
   const popupWidth = 400;
-  const defaultPopupHeight = 400; // Set a default height
+  const defaultPopupHeight = height; // Set a default height
   const title = "Health Tip"; // Set the desired title
 
   const popupUrl = new URL(chrome.runtime.getURL("externalPopup.html"));
   popupUrl.searchParams.set("title", title);
+
+  console.log("Creating new popup window with height:", defaultPopupHeight);
 
   chrome.windows.create(
     {
@@ -332,10 +350,11 @@ function createPopupWindow(sendResponse: (response: any) => void) {
     },
     (window) => {
       if (window) {
-        // console.log("External popup opened:", window);
+        console.log("New popup window created with ID:", window.id);
         popupWindowId = window.id ?? null;
         sendResponse({ status: "opened" });
       } else {
+        console.log("Failed to create new popup window");
         sendResponse({ status: "failed_to_open" });
       }
     }
