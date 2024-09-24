@@ -5,7 +5,7 @@ import "./css/pages.css";
 export default function Pages() {
   const { id } = useParams(); 
   const finalPage = "finalPage";
-  const maxPages = 5;
+  const maxPages = 7;
   const pages = [
     {
       id: 1,
@@ -16,24 +16,38 @@ export default function Pages() {
     },
     {
       id: 2,
-      title: "Side Panel: Fact-Checking Results",
-      content: "The eXtHealth side panel will appear after clicking the 'Check This Out' button. This will provide users with information from trusted sources regarding the post to help verify its credibility and prevent misinformation.",
+      title: "extHealth Icon",
+      content: "By clicking the eXtHealth icon in the extension bar, these features are enabled by default. However, here, you can choose to disable the Health Tips Reminder and/or X Auto Detect. From here, you can also open the Fact Check Sidebar.",
       nextLink: "pages/3",
       imgLink: "/page2.png",
     },
     {
       id: 3,
-      title: "Health Reminders",
-      content: "By clicking the eXtHealth icon in the extension bar, health reminders will appear, containing general health information from reliable and credible sources.",
+      title: "eXtHealth Health Reminders",
+      content: "The eXtHealth Health Reminders appears like a modal posts while  browsing X.",
       nextLink: "pages/4",
       imgLink: "/page3.png",
     },
     {
       id: 4,
+      title: "Side Panel: Fact-Checking Results",
+      content: "The eXtHealth side panel will appear after clicking the 'Check This Out' button. This will provide users with information from trusted sources regarding the post to help verify its credibility and prevent misinformation.",
+      nextLink: "pages/5",
+      imgLink: "/page4.png",
+    },
+    {
+      id: 5,
+      title: "Health Settings",
+      content: "Settings lets you customize the extension to your liking. Select the Interval tab to set reminder intervals, the Topics tab to choose health tip topics, and the Danger tab to clear local storage data.",
+      nextLink: "pages/6",
+      imgLink: "/page5.gif",
+    },
+    {
+      id: 6,
       title: "Quick Access Side Panel for Health Claims ",
       content: "When browsing, you can open the side panel and input health claim statements by simply highlighting the text, then selecting 'Check Health Information' from the context menu, or by clicking the eXtHealth logo in the extension bar.",
       nextLink: finalPage,
-      imgLink: "/page4.png",
+      imgLink: "/page6.png",
     },
   ];
 

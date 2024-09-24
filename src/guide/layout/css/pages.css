@@ -1,3 +1,6 @@
+nav{
+    display: none;
+}
 #pages{
     display: flex;
     flex-direction: column;
@@ -37,6 +40,12 @@
         }
     }
 }
+@media (min-width: 768px){
+    nav{
+        display: block;
+    }
+}
+
 @media (min-width: 1440px){
     #pages{
         margin-bottom: 2rem;
