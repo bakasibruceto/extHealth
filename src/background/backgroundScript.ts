@@ -210,46 +210,44 @@ async function factCheck(text) {
   }
 
     try {
-      // Retrieve extHealthFacts from storage with a timeout of 3 seconds
-      let result = await getFromStorage(['extHealthFacts'], 3000) as HealthFactsStorage;
-      let currentData = result.extHealthFacts ? result.extHealthFacts.result : [];
-  
-      response.result.forEach(newItem => {
-          currentData = currentData.filter(item => item.hypothesis !== newItem.hypothesis);
-          currentData.unshift(newItem);
-      });
-  
-      if (currentData.length > 6) {
-          currentData = currentData.slice(0, 6);
-      }
-  
-      await setInStorage({ extHealthFacts: { result: currentData } });
-  
-  } catch (error) {
-      if (error.message === 'Timeout') {
-          // console.warn('Storage request timed out, proceeding with empty extHealthFacts');
-          let currentData = [];
-  
-          response.result.forEach(newItem => {
-              currentData = currentData.filter(item => item.hypothesis !== newItem.hypothesis);
-              currentData.unshift(newItem);
-          });
-  
-          if (currentData.length > 6) {
-              currentData = currentData.slice(0, 6);
-          }
-  
-          await setInStorage({ extHealthFacts: { result: currentData } });
-      } else {
-          chrome.notifications.create({
-              type: 'basic',
-              iconUrl: 'warning.png',
-              title: 'eXtHealth Error',
-              message: 'Error in Accessing Storage',
-              priority: 2
-          });
-      }
-  }
+        // Retrieve extHealthFacts from storage with a timeout of 3 seconds
+        let result = await getFromStorage(['extHealthFacts'], 3000) as HealthFactsStorage;
+        let currentData = result.extHealthFacts ? result.extHealthFacts.result : [];
+    
+        // Replace current data with the received data
+        currentData = response.result;
+    
+        // Ensure the data length does not exceed 6 items
+        if (currentData.length > 6) {
+            currentData = currentData.slice(0, 6);
+        }
+    
+        await setInStorage({ extHealthFacts: { result: currentData } });
+    
+    } catch (error) {
+        if (error.message === 'Timeout') {
+            // console.warn('Storage request timed out, proceeding with empty extHealthFacts');
+            let currentData = [];
+    
+            // Replace current data with the received data
+            currentData = response.result;
+    
+            // Ensure the data length does not exceed 6 items
+            if (currentData.length > 6) {
+                currentData = currentData.slice(0, 6);
+            }
+    
+            await setInStorage({ extHealthFacts: { result: currentData } });
+        } else {
+            chrome.notifications.create({
+                type: 'basic',
+                iconUrl: 'warning.png',
+                title: 'eXtHealth Error',
+                message: 'Error in Accessing Storage',
+                priority: 2
+            });
+        }
+    }
 
 }
 

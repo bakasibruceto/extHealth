@@ -187,14 +187,19 @@ function setInStorage(data: { [key: string]: any }): Promise<void> {
   });
 }
 
-const setDefaultInstalled = () => {
-  setXAutoDetectState(true);
-  setHealthTipState(true);
-  setInterval(10);
-  const categories = [15, 16, 18, 19, 20, 21, 23, 24, 28, 29];
-  categories.forEach((category) => {
-    setCategoryState(category, true);
-  });
+const setDefaultInstalled = async (): Promise<void> => {
+  try {
+    setXAutoDetectState(true);
+    setHealthTipState(true);
+    setInterval(10);
+    const categories = [15, 16, 18, 19, 20, 21, 23, 24, 28, 29];
+    categories.forEach((category) => {
+      setCategoryState(category, true);
+    });
+    await setInStorage({ extHealthFacts: { result: [] } });
+  } catch (error) {
+    console.error('Error setting default installed state:', error);
+  }
 };
 
 export {
