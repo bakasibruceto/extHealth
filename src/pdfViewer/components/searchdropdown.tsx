@@ -5,8 +5,8 @@ import './SearchDropdown.css'; // Import the CSS file for styling
 
 interface SearchDropdownProps {
     onSearchTermChange: (term: string) => void;
-    onNavigateUp?: () => void; // Optional callback for navigating up
-    onNavigateDown?: () => void; // Optional callback for navigating down
+    onNavigateUp: () => void; // Callback for navigating up
+    onNavigateDown: () => void; // Callback for navigating down
 }
 
 const SearchDropdown: React.FC<SearchDropdownProps> = ({ onSearchTermChange, onNavigateUp, onNavigateDown }) => {
@@ -39,11 +39,11 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({ onSearchTermChange, onN
                             aria-label="Search term"
                             className="search-input"
                         />
-                        <button onClick={onNavigateUp} className="nav-button">
-                            <FontAwesomeIcon icon={faArrowUp} />
-                        </button>
                         <button onClick={onNavigateDown} className="nav-button">
                             <FontAwesomeIcon icon={faArrowDown} />
+                        </button>
+                        <button onClick={onNavigateUp} className="nav-button">
+                            <FontAwesomeIcon icon={faArrowUp} />
                         </button>
                     </div>
                 </div>

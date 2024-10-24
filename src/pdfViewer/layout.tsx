@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./style.css";
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import SearchDropdown from './components/searchdropdown';
+import useDebounce from './useDebounce';
 
 // Function to extract the page number and search term from the URL hash
 const getParamsFromUrl = () => {
@@ -25,6 +26,7 @@ const PdfLayout: React.FC = () => {
     
     const [titleSearch, setTitleSearch] = useState(initialTitle);
     const [search, setSearch] = useState('');
+    const debouncedSearch = useDebounce(search, 500); // Debounce the search term with a 500ms delay
     const title = titleSearch ? titleSearch : 'PDF Viewer';
     const [zoom, setZoom] = useState(1.0); // Default zoom level set to 100%
     const [zoomInput, setZoomInput] = useState((zoom * 100).toString() + '%'); // State for input value
@@ -47,8 +49,17 @@ const PdfLayout: React.FC = () => {
     const handleSearchTermChange = (term: string) => {
         setSearch(term);
         setTitleSearch(term);
+    };
+
+    const handleNavigateUp = () => {
         if (pdfViewerRef.current) {
-            pdfViewerRef.current.scrollToTop();
+            pdfViewerRef.current.navigateToPreviousResult();
+        }
+    };
+
+    const handleNavigateDown = () => {
+        if (pdfViewerRef.current) {
+            pdfViewerRef.current.navigateToNextResult();
         }
     };
 
@@ -57,7 +68,7 @@ const PdfLayout: React.FC = () => {
         if (pdfViewerRef.current) {
             pdfViewerRef.current.scrollToTop();
         }
-    }, [search]);
+    }, [debouncedSearch]);
 
     // Zoom handling
     const addZoom = () => {
@@ -176,9 +187,9 @@ const PdfLayout: React.FC = () => {
                         </button>
                     </span>
                 </div>
-                <SearchDropdown onSearchTermChange={handleSearchTermChange} />
+                <SearchDropdown onSearchTermChange={handleSearchTermChange} onNavigateUp={handleNavigateUp} onNavigateDown={handleNavigateDown} />
             </nav>
-            <PdfViewer ref={pdfViewerRef} pdfPath={pdfPath} initialPage={initialPage} search={search} zoom={zoom} />
+            <PdfViewer ref={pdfViewerRef} pdfPath={pdfPath} initialPage={initialPage} search={debouncedSearch} zoom={zoom} />
         </div>
     );
 };
