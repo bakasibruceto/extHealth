@@ -1,4 +1,5 @@
-import React, { useCallback, useState, useEffect } from 'react';
+// pdfviewer.tsx
+import React, { useImperativeHandle, forwardRef, useRef, useCallback, useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -15,7 +16,6 @@ const options = {
 interface PdfViewerProps {
     pdfPath: string; // Path to the PDF file
     initialPage?: number; // Optional: Starting page
-    title?: string; // Optional: Search term
     search?: string; // Optional: Search term
     zoom: number; // Zoom level
 }
@@ -25,13 +25,28 @@ function highlightPattern(text: string, pattern: string): string {
     return text.replace(regex, (value) => `<mark>${value}</mark>`);
 }
 
-const PdfViewer: React.FC<PdfViewerProps> = ({ pdfPath, initialPage = 1, title = '', search = '', zoom = 1.0 }) => {
+const PdfViewer = forwardRef(({ pdfPath, initialPage = 1, search = '', zoom = 1.0 }: PdfViewerProps, ref) => {
     const [numPages, setNumPages] = useState<number>(0);
     const [currentPage, setCurrentPage] = useState<number>(initialPage);
     const [searchText, setSearchText] = useState<string>(search);
     const [zoomLevel, setZoomLevel] = useState<number>(zoom);
+    const viewerRef = useRef<HTMLDivElement>(null);
 
-    
+    useImperativeHandle(ref, () => ({
+        scrollToTop: () => {
+            if (viewerRef.current) {
+                viewerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        },
+        scrollToPage: (pageNum: number) => {
+            if (viewerRef.current) {
+                const pageElement = viewerRef.current.querySelector(`[data-page-number="${pageNum}"]`);
+                if (pageElement) {
+                    pageElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+    }));
 
     useEffect(() => {
         setSearchText(search);
@@ -43,7 +58,6 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ pdfPath, initialPage = 1, title =
     useEffect(() => {
         setZoomLevel(zoom);
     }, [zoom]);
-    
 
     const textRenderer = useCallback(
         (textItem: { str: string }) => {
@@ -67,6 +81,12 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ pdfPath, initialPage = 1, title =
                 const textItems = textContent.items.map((item: any) => item.str).join(' ');
                 if (textItems.toLowerCase().includes(term.toLowerCase())) {
                     setCurrentPage(pageNum);
+                    if (viewerRef.current) {
+                        const pageElement = viewerRef.current.querySelector(`[data-page-number="${pageNum}"]`);
+                        if (pageElement) {
+                            pageElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
                     break;
                 }
             }
@@ -77,15 +97,11 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ pdfPath, initialPage = 1, title =
 
     const renderPages = () => {
         const pages = [];
-        const pagesToRender = Math.min(5, numPages - currentPage + 1);
-        if (currentPage <= 0) {
-            setCurrentPage(1);
-        }
-        for (let i = 0; i < pagesToRender; i++) {
+        for (let i = 0; i < numPages; i++) {
             pages.push(
-                <div key={`pageParent_${currentPage + i}`} style={{ position: 'relative' }}>
+                <div key={`pageParent_${i + 1}`} style={{ position: 'relative' }}>
                     <span
-                        key={`pageCounter_${currentPage + i}`}
+                        key={`pageCounter_${i + 1}`}
                         style={{
                             zIndex: 25,
                             position: 'absolute',
@@ -96,11 +112,11 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ pdfPath, initialPage = 1, title =
                             padding: '5px',
                             borderRadius: '0px 0px 0px 5px'
                         }}>
-                        {currentPage + i + " of " + numPages}
+                        {i + 1 + " of " + numPages}
                     </span>
                     <Page
-                        key={`page_${currentPage + i}`}
-                        pageNumber={currentPage + i}
+                        key={`page_${i + 1}`}
+                        pageNumber={i + 1}
                         customTextRenderer={textRenderer}
                         scale={zoomLevel}
                     />
@@ -111,7 +127,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ pdfPath, initialPage = 1, title =
     };
 
     return (
-        <div style={{ textAlign: 'center', margin: '20px' }}>
+        <div ref={viewerRef} style={{ textAlign: 'center', margin: '20px' }}>
             <Document
                 className="pdf-body"
                 options={options}
@@ -122,6 +138,6 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ pdfPath, initialPage = 1, title =
             </Document>
         </div>
     );
-};
+});
 
 export default PdfViewer;

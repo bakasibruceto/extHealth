@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import PdfViewer from './pdfviewer';
 import { createRoot } from "react-dom/client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,6 +30,7 @@ const PdfLayout: React.FC = () => {
     const [zoomInput, setZoomInput] = useState((zoom * 100).toString() + '%'); // State for input value
     const minZoom = 0.25; // Minimum zoom level (25%)
     const maxZoom = 5.0; // Maximum zoom level (500%)
+    const pdfViewerRef = useRef<any>(null);
 
     // Update the state if the URL hash changes
     useEffect(() => {
@@ -46,7 +47,17 @@ const PdfLayout: React.FC = () => {
     const handleSearchTermChange = (term: string) => {
         setSearch(term);
         setTitleSearch(term);
+        if (pdfViewerRef.current) {
+            pdfViewerRef.current.scrollToTop();
+        }
     };
+
+    // Ensure scroll to top when search term changes
+    useEffect(() => {
+        if (pdfViewerRef.current) {
+            pdfViewerRef.current.scrollToTop();
+        }
+    }, [search]);
 
     // Zoom handling
     const addZoom = () => {
@@ -152,12 +163,6 @@ const PdfLayout: React.FC = () => {
             <nav>
                 <h1>{title}</h1>
                 <div id="zoom">
-                    {/* <div className="pageNumber">
-                        <span id="currentPage">{initialPage}</span>
-                        <span>/</span>
-                        <span id="totalPages"></span>
-                    </div>
-                    <span className="vertical-separator"></span> */}
                     <span id="zoom-controls">
                         <button id="zoom-out" onClick={minusZoom}>
                             <FontAwesomeIcon icon={faMinus} style={{ color: "white" }} />
@@ -173,7 +178,7 @@ const PdfLayout: React.FC = () => {
                 </div>
                 <SearchDropdown onSearchTermChange={handleSearchTermChange} />
             </nav>
-            <PdfViewer pdfPath={pdfPath} initialPage={initialPage} search={search} zoom={zoom} />
+            <PdfViewer ref={pdfViewerRef} pdfPath={pdfPath} initialPage={initialPage} search={search} zoom={zoom} />
         </div>
     );
 };
